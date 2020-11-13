@@ -12,7 +12,7 @@ yatai_image = "bentoml/yatai-service"
 
 
 class KubernetesApiClient():
-    def __init__(self):
+    def __init__(self, yatai_service):
         try:
             config.load_incluster_config()
         except Exception as ex:
@@ -21,6 +21,7 @@ class KubernetesApiClient():
 
         # self.service_account=
         self.configuration = client.Configuration()
+        self.yatai_service = yatai_service
 
     def create_builder_pod(self, job_name, container_image,
                            ns, bentoservice):
@@ -28,7 +29,7 @@ class KubernetesApiClient():
         print("at=starting-job-creation job=%s" % job_name)
         bento_env = client.V1EnvVar(
             name='BENTOML__YATAI_SERVICE__URL',
-            value=yatai_service)
+            value=self.yatai_service)
 
         volume = client.V1Volume(
             name=f"bento-storage",

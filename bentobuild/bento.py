@@ -1,27 +1,29 @@
 import os
 import sys
-import base64
+import shortuuid
 
-from build import KubernetesApiClient
+from bentobuild.build import KubernetesApiClient
 from kubernetes import client
 from kubernetes.client.rest import ApiException
 
-default_name = "bentobuild-job-01"
+default_name = "myjob"
 
 
 class BentoPodBuilder():
     def __init__(self, yatai_service=None):
+        self.yatai_service = None
         if yatai_service:
             self.yatai_service = yatai_service
-            return
-        env_yatai_service = os.environ.get('BENTOML__YATAI_SERVICE__URL')
-        if env_yatai_service:
-            self.yatai_service = env_yatai_service
-            return
-        print("No Yatai Service defined nby arguments or Env! \
-              Please set 'BENTOML__YATAI_SERVICE__URL'")
 
-        self.api = KubernetesApiClient()
+        env_yatai_service = os.environ.get('BENTOML__YATAI_SERVICE__URL')
+        if env_yatai_service and not self.yatai_service:
+            self.yatai_service = env_yatai_service
+
+        if not self.yatai_service:
+            print("Yatai Service undefined in arguments and Env! \
+                   Set 'BENTOML__YATAI_SERVICE__URL'")
+
+        self.api = KubernetesApiClient(self.yatai_service)
 
         configuration = client.Configuration()
 
@@ -29,28 +31,30 @@ class BentoPodBuilder():
 
         self.batchv1 = client.BatchV1Api(client.ApiClient(configuration))
 
-    # Safe builds are done in a temporary namespace
+    # Safe builds are done in a temporary namespace that is auto-cleaned up
     def safe_build(self,
                    service,
                    image,
-                   ns,
                    cleanup=True,
                    name=default_name):
 
-        self.ns = "build-%s-%s" % name, base64.urlsafe_b64encode(os.urandom(6))
+        self.ns = "%s%s" % (name,
+                            shortuuid.ShortUUID().random(length=4).lower())
+
+        print("at=unique-namespace ns=%s" % self.ns)
 
         # self.check_ns(service, image, ns, name)
 
-        self.create_ns(service, image, ns, name)
+        self.create_ns(self.ns)
 
-        self.create_builder_job(service, image, ns, name)
+        self.create_builder_job(service, image, self.ns, name)
 
 # spawn background process to cleanup after completion
 #        if cleanup:
 #            self.delete_ns()
 
     def create_ns(self, ns):
-        body = client.V1Namespace(name=ns)
+        body = client.V1Namespace(metadata=dict(name=ns))
         try:
             api_response = self.corev1.create_namespace(body)
             print(api_response)
