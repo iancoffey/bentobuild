@@ -1,4 +1,4 @@
-# bentoml-builder
+# bentobuild
 
 A helper which provides a simple api to launching pods to create docker images from BentoML Services in a Kubernetes clister, by making use of BentoMLs [YataiService](https://docs.bentoml.org/en/latest/concepts.html#customizing-model-repository).
 
