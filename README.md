@@ -30,3 +30,11 @@ builder.safe_build('FastaiDemo:20201105133154_04F821', 'iancoffey/mydemo:latest'
 builder.status() # prints some output from the Job status
 
 ```
+
+## Docker Credentials
+
+It is important to establish Docker credentials for the builder to use to push to your desired repo.
+
+To do this, the project supports mounting a configmap containting a Docker `config.json` into the build environment.
+
+See the [Kaniko documentation](https://github.com/GoogleContainerTools/kaniko/blob/master/README.md#pushing-to-different-registries) for more info on how to format and create this secret.
