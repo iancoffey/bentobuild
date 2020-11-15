@@ -6,10 +6,10 @@ from bentobuild.build import KubernetesApiClient
 from kubernetes import client
 from kubernetes.client.rest import ApiException
 
-default_name = "myjob"
+default_name = "model-build"
 
 
-class BentoPodBuilder():
+class BentoJobBuilder():
     def __init__(self, yatai_service=None):
         self.yatai_service = None
         if yatai_service:
@@ -35,35 +35,24 @@ class BentoPodBuilder():
     def safe_build(self,
                    service,
                    image,
+                   ns,
                    cleanup=True,
                    name=default_name):
 
-        self.ns = "%s%s" % (name,
-                            shortuuid.ShortUUID().random(length=4).lower())
+        print("fn=safe_build at=build-namespace ns=%s" % ns)
 
-        print("at=unique-namespace ns=%s" % self.ns)
+        self.check_ns_exists(ns)
 
-        # self.check_ns(service, image, ns, name)
+        return self.create_builder_job(service, image, ns, name)
 
-        self.create_ns(self.ns)
-
-        self.create_builder_job(service, image, self.ns, name)
-
-# spawn background process to cleanup after completion
-#        if cleanup:
-#            self.delete_ns()
-
-    def create_ns(self, ns):
-        body = client.V1Namespace(metadata=dict(name=ns))
+    def check_ns_exists(self, ns):
         try:
-            api_response = self.corev1.create_namespace(body)
-            print(api_response)
+            api_response = self.corev1.read_namespace(ns)
+            print("at=verify-namespace-success ns=%s" % ns)
         except ApiException as e:
-            print("at=error fn=create_namespace err=%q\n" % e)
+                print("at=error-ns-doesnt-exist fn=check_ns_exists ns=%q" % ns)
 
-    def create_builder_job(self, service,
-                           image,
-                           ns,
+    def create_builder_job(self, service, image, ns,
                            name=default_name):
 
         job = self.api.create_builder_pod(
@@ -74,10 +63,28 @@ class BentoPodBuilder():
             )
 
         try:
-            api_response = self.batchv1.create_namespaced_job(
+            created = self.batchv1.create_namespaced_job(
                 namespace=ns,
                 body=job)
-            print(str(api_response.status))
+            #print(str(created))
         except ApiException as e:
             print(e)
             sys.Exit(1)
+
+        return created
+
+    def status(self, job):
+        print("fn=status name=%s ns=%s" % (
+            job.metadata.name,
+            job.metadata.namespace))
+        try:
+            update = self.batchv1.read_namespaced_job(
+                job.metadata.name,
+                job.metadata.namespace)
+            print(str(update.status))
+        except ApiException as e:
+            print("at=status error=%s" % e)
+
+#class BentoTaskBuilder():
+#    def __init__(self):
+#        print("wip")
