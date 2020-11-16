@@ -2,11 +2,11 @@
 
 A helper which provides a simple api to launching pods to create docker images from BentoML Services in a Kubernetes clister, by making use of BentoMLs [YataiService](https://docs.bentoml.org/en/latest/concepts.html#customizing-model-repository).
 
-This does not use the `bentoml containerize` command because it requires Docker daemon and our build containers wont be running a docker daemon. Instead, this package creates a custom Kubernetes Job, which uses` bentoml retrieve` alongside [`Kaniko executor`](https://github.com/GoogleContainerTools/kaniko) to build the BentoML context and artifacts into a docker image and push it to your desired docker image and tag.
+This does not use the `bentoml containerize` command because it requires Docker daemon and build containers most commonly wont have a running a docker daemon. Instead, this package creates a custom Kubernetes Job, which uses` bentoml retrieve` alongside [`Kaniko executor`](https://github.com/GoogleContainerTools/kaniko) to build the BentoML context and artifacts into a docker image and push it to your desired docker image and tag.
 
 The resulting image can be served via KFServing inferenceservice or via the bundled serving experiment.
 
-The builder schedules a standard Kubernetes Job with several containers to build the imagimagee.
+The builder schedules a standard Kubernetes Job with several containers to build the image.
 
 ## YataiService Required
 
