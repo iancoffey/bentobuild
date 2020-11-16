@@ -1,14 +1,11 @@
 from kubernetes import client, config
 import uuid
-import os
-
 build_id = uuid.uuid1()
 
 config_mount_dir = "/kaniko/.docker/"
 bento_mount_dir = "/tmp/%s" % build_id
 target_dir = "%s/build" % bento_mount_dir
 yatai_image = "bentoml/yatai-service"
-
 
 
 class KubernetesApiClient():
@@ -47,7 +44,7 @@ class KubernetesApiClient():
             name=f"docker-config",
             mount_path=config_mount_dir)
 
-        # do a bentoml retrieve to get a build context auto populated
+        # use bentoml retrieve to obtain the correct build context
         bento_args = [
             "bentoml",
             "retrieve",
@@ -55,8 +52,8 @@ class KubernetesApiClient():
             "--target_dir=%s" % target_dir,
             "--debug"]
 
-        # tl;dr build bento context into an image and push without requiring docker
-        # daemon (CI pipelines, etc)
+        # tl;dr build context into image and push without docker daemon
+        # (for headless use in CI pipelines, etc)
         bento_container = client.V1Container(
             name="%s-bento" % job_name,
             image=yatai_image,
