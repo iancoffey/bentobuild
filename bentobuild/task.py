@@ -7,6 +7,11 @@ from kubernetes.client.rest import ApiException
 
 default_name = "model-build"
 
+# move to README -> The Tekton catalog bentoml and kaniko tasks must be installed prior to using
+# the Tekton task builder
+# kubectl apply -f https://github.com/tektoncd/catalog/blob/master/task/bentoml/0.1/bentoml.yaml
+# kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/kaniko/0.1/kaniko.yaml
+
 
 # WIP WIP WIP WIP
 class BentoTaskBuilder(GenericBuilder):
@@ -20,8 +25,6 @@ class BentoTaskBuilder(GenericBuilder):
         apiclient = client.ApiClient(configuration)
 
         self.corev1 = client.CoreV1Api(apiclient)
-
-        self.batchv1 = client.BatchV1Api(apiclient)
 
         self.customv1 = client.CustomObjectsApi(apiclient)
 
@@ -40,13 +43,12 @@ class BentoTaskBuilder(GenericBuilder):
 
         return self.create_builder_task(service, image, ns, name)
 
+
     def create_builder_task(self, service, image, ns, name=default_name):
-        job = self.api.create_builder_task(
-            name,
-            image,
-            ns,
-            service
-            )
+
+        task_data= """
+        {"apiVersion": "networking.istio.io/v1alpha3", "kind": "Gateway", "metadata": {"name": "gateway-xxxxxxxx", "namespace": "default"}, "spec": {"selector": {"istio": "ingressgateway"}, "servers": [{"port": {"number": 49999, "name": "tcp-49999", "protocol": "tcp"}, "hosts": ["*"]}]}}
+        """
 
         try:
             created = self.batchv1.create_namespaced_job(

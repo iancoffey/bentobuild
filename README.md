@@ -2,11 +2,11 @@
 
 A helper which provides a simple api to launching pods to create docker images from BentoML Services in a Kubernetes clister, by making use of BentoMLs [YataiService](https://docs.bentoml.org/en/latest/concepts.html#customizing-model-repository).
 
-Unlike the `bentoml containerize` command, this builder does not require Docker. Instead, this package creates a custom Kubernetes Job, which uses` bentoml retrieve` alongside [`Kaniko executor`](https://github.com/GoogleContainerTools/kaniko) to build the BentoML context and artifacts into a docker image and push it to your desired docker image and tag.
+This does not use the `bentoml containerize` command because it requires Docker daemon and our build containers wont be running a docker daemon. Instead, this package creates a custom Kubernetes Job, which uses` bentoml retrieve` alongside [`Kaniko executor`](https://github.com/GoogleContainerTools/kaniko) to build the BentoML context and artifacts into a docker image and push it to your desired docker image and tag.
 
 The resulting image can be served via KFServing inferenceservice or via the bundled serving experiment.
 
-The builder can either schedule a standard Kubernetes Job (the default), or a Tekton Task alternatively.
+The builder can either schedule a standard Kubernetes Job (the default), or try the experimental support for Tekton Tasks.
 
 ## YataiService Required
 
@@ -38,3 +38,9 @@ It is important to establish Docker credentials for the builder to use to push t
 To do this, the project supports mounting a configmap containting a Docker `config.json` into the build environment.
 
 See the [Kaniko documentation](https://github.com/GoogleContainerTools/kaniko/blob/master/README.md#pushing-to-different-registries) for more info on how to format and create this secret.
+
+# move to README -> The Tekton catalog bentoml and kaniko tasks must be installed prior to using
+# the Tekton task builder
+# kubectl apply -f https://github.com/tektoncd/catalog/blob/master/task/bentoml/0.1/bentoml.yaml
+# kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/kaniko/0.1/kaniko.yaml
+
