@@ -12,6 +12,8 @@ class BentoJobBuilder(GenericBuilder):
     def __init__(self, yatai_service=None):
         super().__init__(yatai_service)
 
+        print("yataiservice->%s" % self.yatai_service)
+
         self.api = KubernetesApiClient(self.yatai_service)
 
         configuration = client.Configuration()
