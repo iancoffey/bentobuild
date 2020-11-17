@@ -19,11 +19,10 @@ I would suggest running the `YataiService` so it is only open to local cluster t
 In the example below, the builder will create a new Kubernetes Job, which will produce an image, tag it and push it the registry.
 
 
-
 ```
-import bentobuild
+from bentobuild.job import BentoJobBuilder
 
-builder = bentobuild.Builder()
+builder = bentobuild.BentoJobBuilder()
 
 # safe_build requires a BentoML Service ID, an image tag and your build namespace.
 # This is the namespace where your docker credentials need to exist - see below.
@@ -35,9 +34,13 @@ builder.status() # prints some output from the Job status
 
 ```
 
-## Docker Credentials
+## Installation
 
-It is important to establish Docker credentials for the builder to use to push to your desired repo.
+`pip install bentobuild`
+
+### Docker Credentials
+
+It is important to configure Docker credentials for the builder to use to push to your desired repo.
 
 To do this, the project supports mounting a configmap containting a Docker `config.json` into the build environment.
 
