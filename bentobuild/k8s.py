@@ -76,6 +76,8 @@ class KubernetesApiClient():
             "--context=dir://%s" % target_dir,
             "--destination=%s" % container_image,
             "--verbosity=debug",
+            "--digest-file=%s/digest.txt" % target_dir,
+            "--single-snapshot"
         ]
 
         ls_container = client.V1Container(
@@ -123,7 +125,7 @@ class KubernetesApiClient():
             metadata=client.V1ObjectMeta(name=job_name, namespace=ns),
             spec=spec)
 
-        print("at=initialized-job job=%s ns=%s",
+        print("at=initialized-job job=%s ns=%s" %
               job.metadata.name, job.metadata.namespace)
 
         return job

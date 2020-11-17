@@ -74,7 +74,7 @@ class BentoJobBuilder(GenericBuilder):
             job.metadata.name,
             job.metadata.namespace,
             status))
-        return "failed"
+        return status
 
     def parse_status(self, status):
         if not status.start_time:
