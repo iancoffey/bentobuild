@@ -126,6 +126,6 @@ class KubernetesApiClient():
             spec=spec)
 
         print("at=initialized-job job=%s ns=%s" %
-              job.metadata.name, job.metadata.namespace)
+              (job.metadata.name, job.metadata.namespace))
 
         return job
