@@ -3,7 +3,7 @@ import os
 from kubernetes.client.rest import ApiException
 
 default_name = "model-build"
-
+## BUILDER SETS METADATA ON BEN@TO OBJECT! for the sha of the image associated with it!
 
 class GenericBuilder():
     def __init__(self, yatai_service=None):

@@ -1,14 +1,18 @@
 import setuptools
+import os
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+version_file = open(os.path.join('./bentobuild/version.txt'))
+version = version_file.read().strip()
+
 setuptools.setup(
     name="bentobuild",
-    version="0.0.1",
+    version=version,
     author="Ian Coffey",
     author_email="icoffey@vmware.com",
-    description="Build BentoML Services into Images on K8S without requiring a Docker Daemon",
+    description="Build BentoML Services into Images on K8S",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/iancoffey/bentoml-builder",
