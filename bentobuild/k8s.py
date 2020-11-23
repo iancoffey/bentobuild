@@ -1,3 +1,6 @@
+# Copyright 2020 VMware, Inc.
+# SPDX-License-Identifier: Apache-2-Clause
+
 from kubernetes import client, config
 import uuid
 build_id = uuid.uuid1()

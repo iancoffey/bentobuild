@@ -1,9 +1,13 @@
+# Copyright 2020 VMware, Inc.
+# SPDX-License-Identifier: Apache-2-Clause
+
 import os
 
 from kubernetes.client.rest import ApiException
 
 default_name = "model-build"
-## BUILDER SETS METADATA ON BEN@TO OBJECT! for the sha of the image associated with it!
+# TODO: Builder set image metadata for every Service
+
 
 class GenericBuilder():
     def __init__(self, yatai_service=None):
