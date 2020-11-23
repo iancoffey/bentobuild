@@ -1,5 +1,7 @@
+# Copyright 2020 VMware, Inc.
+# SPDX-License-Identifier: Apache-2
+
 from bentobuild.job import BentoJobBuilder
-# from pprint import pprint
 import threading
 import sys
 
