@@ -1,5 +1,5 @@
 # Copyright 2020 VMware, Inc.
-# SPDX-License-Identifier: Apache-2-Clause
+# SPDX-License-Identifier: Apache-2
 
 import setuptools
 import os
