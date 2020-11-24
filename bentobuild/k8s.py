@@ -12,18 +12,19 @@ yatai_image = "bentoml/yatai-service"
 
 
 class KubernetesApiClient():
-    def __init__(self, yatai_service):
-        try:
-            config.load_incluster_config()
-        except Exception as ex:
-            print(ex)
-            config.load_kube_config()
+    def __init__(self, yatai_service, test=False):
+        if not test:
+            try:
+                config.load_incluster_config()
+            except Exception as ex:
+                print(ex)
+                config.load_kube_config()
 
         # self.service_account=
-        self.configuration = client.Configuration()
+        # self.configuration = client.Configuration()
         self.yatai_service = yatai_service
 
-    def create_builder_pod(self, job_name, container_image,
+    def create_builder_job(self, job_name, container_image,
                            ns, bentoservice):
 
         print("at=starting-job-creation job=%s" % job_name)
@@ -66,14 +67,6 @@ class KubernetesApiClient():
             volume_mounts=[volume_mount],
         )
 
-        bento_ls_container = client.V1Container(
-            name="%s-ls-dir" % job_name,
-            image="busybox:latest",
-            args=["ls", "-la", target_dir],
-            image_pull_policy="Always",
-            volume_mounts=[volume_mount]
-        )
-
         kaniko_args = [
             "--dockerfile=%s/Dockerfile" % target_dir,
             "--context=dir://%s" % target_dir,
@@ -82,14 +75,6 @@ class KubernetesApiClient():
             "--digest-file=%s/digest.txt" % target_dir,
             "--single-snapshot"
         ]
-
-        ls_container = client.V1Container(
-            name="%s-dockerconfigls" % job_name,
-            image="busybox:latest",
-            args=["cat", "%s/config.json" % config_mount_dir],
-            image_pull_policy="Always",
-            volume_mounts=[volume_mount, docker_config_mount],
-        )
 
         kaniko_container = client.V1Container(
             name="%s-kaniko" % job_name,
@@ -110,8 +95,6 @@ class KubernetesApiClient():
                                       bento_container,
                                   ],
                                   containers=[
-                                      bento_ls_container,
-                                      ls_container,
                                       kaniko_container,
                                   ],
                                   volumes=[volume, docker_config]),
