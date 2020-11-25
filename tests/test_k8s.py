@@ -1,5 +1,5 @@
 import unittest
-from k8s import KubernetesApiClient
+from bentobuild import k8s
 
 
 class TestKubernetesApiClient(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestKubernetesApiClient(unittest.TestCase):
         job_ns = "fake"
         job_img = "img-123"
 
-        c = KubernetesApiClient("http://yatai-service.local", test=True)
+        c = k8s.KubernetesApiClient("http://yatai-service.local", test=True)
         job = c.create_builder_job(job_name, job_img, job_ns, "something:1234")
 
         self.assertEqual(job.metadata.name, job_name)
