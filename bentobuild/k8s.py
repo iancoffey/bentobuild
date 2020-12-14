@@ -8,7 +8,7 @@ build_id = uuid.uuid1()
 config_mount_dir = "/kaniko/.docker/"
 bento_mount_dir = "/tmp/%s" % build_id
 target_dir = "%s/build" % bento_mount_dir
-yatai_image = "bentoml/yatai-service"
+yatai_image = "bentoml/yatai-service:0.9.2"
 
 
 class KubernetesApiClient():
