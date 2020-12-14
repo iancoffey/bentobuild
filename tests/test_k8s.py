@@ -16,7 +16,7 @@ class TestKubernetesApiClient(unittest.TestCase):
         self.assertEqual(job.metadata.namespace, job_ns)
         self.assertEqual(
             job.spec.template.spec.init_containers[0].image,
-            "bentoml/yatai-service")
+            "bentoml/yatai-service:0.9.2")
 
 
 if __name__ == '__main__':
