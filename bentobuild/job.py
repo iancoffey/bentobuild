@@ -45,7 +45,7 @@ class BentoJobBuilder(GenericBuilder):
     def create_builder_job(self, service, image, ns,
                            name=default_name):
 
-        job = self.api.create_builder_pod(
+        job = self.api.create_builder_job(
             name,
             image,
             ns,
